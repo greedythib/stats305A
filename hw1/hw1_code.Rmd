@@ -1,0 +1,57 @@
+---
+title: "hw1"
+author: "Thibaud Bruyelle"
+date: "9/15/2020"
+output: pdf_document
+---
+
+
+## Question 2
+
+### (a)
+
+### (b)
+
+The estimates are given by the following formula:
+
+$$\boxed{\hat \alpha_{1} = \frac{\displaystyle \sum_{i=1}^{n}\widetilde{x}_{i}(y_{i} - \bar y)}{\displaystyle \sum_{i=1}^{n} \widetilde{x}_{i}^{2} }}$$
+and 
+
+$$\boxed{\hat \alpha_{0} = \bar y}$$
+
+because $\frac{1}{n} \sum_{i=1}^{n} \widetilde{x}_{i} = 0$
+
+### (c)
+
+We can write: 
+
+\begin{align*}
+\hat \alpha_{1} &= \frac{\displaystyle \sum_{i=1}^{n}\widetilde{x}_{i}(y_{i} - \bar y)}{\displaystyle \sum_{i=1}^{n}\widetilde{x}_{i}^{2}} \\
+&= \frac{(1/s_{X}) \times \displaystyle \sum_{i=1}^{n}(x_{i} - \bar x)(y_{i} - \bar y)}{(1/s_{X})^{2} \times \displaystyle  \sum_{i=1}^{n}(x_{i} - \bar x)^{2}} \\
+&= s_{X} \times \frac{n \times s_{XY} \times s_{Y}}{n \times s_{X}^{2} \times s_{Y}}\\
+\end{align*}
+
+Finally : 
+$$\boxed{\hat \alpha_{1} = s_{Y} \times \widehat{\rho(X,Y)} }$$
+
+### (d)
+
+By noting that $var(Y) = \sigma^{2}$, the sampling variance of these estimates is given by: 
+
+\begin{align*}
+var(\hat \alpha_{1}) &= s_{X}^{2} \times \frac{\displaystyle \sum_{i=1}^{n}(x_{i} - \bar x)^{2}}{(\displaystyle \sum_{i=1}^{n} (x_{i} - \bar x)^{2})^{2}} \times \sigma^{2}\\
+&= s_{X}^{2} \times \frac{\sigma^{2}}{\displaystyle \sum_{i=1}^{n}(x_{i} - \bar x)^{2}}\\
+\end{align*}
+
+Finally : $$\boxed{var(\hat \alpha_{1}) = \frac{\sigma^{2}}{n}}$$
+Then : 
+
+\begin{align*}
+var(\hat \alpha_{0}) &= var(\bar y)\\
+\end{align*}
+
+So then $$\boxed{var(\hat \alpha_{0}) = \frac{\sigma ^{2}}{n}}$$
+
+### (e)
+
+### (f)
