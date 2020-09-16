@@ -52,6 +52,17 @@ var(\hat \alpha_{0}) &= var(\bar y)\\
 
 So then $$\boxed{var(\hat \alpha_{0}) = \frac{\sigma ^{2}}{n}}$$
 
+
+Furthermore, 
+
+$cov(\hat \alpha_{0}, \hat \alpha_{1}) = \frac{\sum \widetilde{x}_{i}}{\sum \widetilde{x}_{i}^{2}} cov(y_{i} - \bar y, \bar y)$
+with $cov(y_{i}, \bar y) = \frac{1}{n} \sigma^{2}$ as $cov(y_{i}, y_{k}) = 0$ when $i \neq k$ because samples are *iid* and also $cov(\bar y, \bar y) = \frac{1}{n}\sigma^{2}$.
+
+So finally:
+
+$$cov(\hat \alpha_{0}, \hat \alpha_{1}) = \sigma^{2} \times \frac{\sum \widetilde{x}_{i}}{\sum \widetilde{x}_{i}^{2}} \times (\frac{1}{n} - \frac{1}{n}) \implies \boxed{cov(\hat \alpha_{0}, \hat \alpha_{1}) = 0}$$.
+
+
 ### (e)
 
 ### (f)
