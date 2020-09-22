@@ -2,7 +2,10 @@
 title: "hw1"
 author: "Thibaud Bruyelle"
 date: "9/15/2020"
-output: pdf_document
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
 ---
 
 
@@ -65,4 +68,120 @@ $$cov(\hat \alpha_{0}, \hat \alpha_{1}) = \sigma^{2} \times \frac{\sum \widetild
 
 ### (e)
 
+Using the results from question (c), we get:
+
+$$ \boxed{\hat \beta_{1} = \frac{\hat \alpha_{1}}{s_{X}}} \quad  \text{and} \quad \boxed{\hat \beta_{0} = \hat \alpha_{0} - \frac{\hat \alpha_{1}}{s_{X}} \bar x }$$
+
 ### (f)
+
+Then, we can compute the variances :
+
+$$var(\hat \beta_{1}) = \frac{1}{s_{X}^{2}} \times var(\hat \alpha_{1}) \implies \boxed{var(\hat \beta_{1}) = \frac{\sigma^{2}}{s_{X}^{2}n}}$$.
+
+And also : 
+
+$var(\hat \beta_{0})= var(\hat \alpha_{0}) + (\frac{\bar x}{s_{X}})^{2} \times var(\hat \alpha_{1})$ since we previouslsy showed that $cov(\hat \alpha_{0}, \hat \alpha_{1}) = 0$.
+
+So finally : 
+$$\boxed{var(\hat \beta_{0}) = \frac{\sigma_{2}}{n} \times (1 + (\frac{\bar x}{s_{X}})^{2} )}$$
+
+
+## Question (3)
+
+### (a) 
+
+We pick $\beta_{1}$ in order to minimize the residual sum of squares $RSS(\beta) = Y^{T}Y + \beta^{2}X^{T}X + 2 X^{T}Y$ where $X = (x_{1}, \ldots, x_{n})^{T}$ and $Y =(y_{1}, \ldots, y_{n})^{T}$ : 
+
+$$\frac{\partial RSS(\beta)}{\partial \beta} = 2\beta \times \sum x_{i}^{2} - 2 \sum x_{i} y_{i} \implies \boxed{\hat \beta_{1} = \frac{ \sum x_{i} y_{i}}{ \sum x_{i}^{2}}}$$
+
+Furthermore : $$\mathbb{E}(\hat \beta_{1}) = \frac{ \sum x_{i} \mathbb{E}(y_{i})}{ \sum x_{i}^{2}} = \beta_{1}\frac{ \sum x_{i} \times x_{i}}{ \sum x_{i}^{2}} = \beta_{1}$$ so the estimator is unbiased and its variance is given by:
+
+$$\boxed{var(\hat \beta_{1}) = \frac{\sigma^{2}}{\sum x_{i}^{2}}}$$
+
+
+Finally, $\sigma^{2}$ can be estimated by the sample variance : $\frac{1}{n-1} \sum_{i}^{n} (y_{i} - \beta_{1}x_{i})^{2}$. So in order to estimate $\sigma^{2}$, we could use the plug-in estimator : 
+
+$$\boxed{\widehat{\sigma^{2}} = \frac{1}{n-1} \sum_{i=1}^{n} (y_{i} - \hat \beta_{1}x_{i})^{2} }$$.
+
+Besides, it has $n-1$ degrees of freedom. 
+
+### (b) 
+
+Let us assume that $\epsilon \sim \mathcal{N}(0, \sigma^{2})$. Then we have : 
+
+$$\boxed{\hat \beta_{1} \sim \mathcal{N}(\beta_{1}, var(\hat \beta_{1}))}$$. So under the null hypothesis $\mathcal{H}_{0} : \beta_{1} = 0$, we could write the t-statistic: 
+
+$$\frac{\hat \beta_{1}}{\sqrt{var(\hat \beta_{1})}} \sim  \mathcal{N}(0, 1)$$.
+
+However, since we do not know $var(\hat \beta_{1})$, we have to estimate $\widehat{var(\hat \beta_{1})}$ by using the estimate of $\widehat{\sigma^{2}}$ of the error's variance. Finally:
+
+$$\boxed{\frac{\hat \beta_{1}}{\sqrt{var(\hat \beta_{1})}} \sim  t_{n-1}}$$
+
+where $t_{n-1}$ is the Student distribution with $n-1$ degrees of freedom. Now we can compute the t-statistic, and then reject/accept the null hypothesis with a given level of confidence. 
+
+
+## Question 4 
+
+```{r}
+linear.regression <- function(x, y, intercept = TRUE){
+  
+  if (intercept == T){
+    X = cbind(1,x)
+  }
+  else if (intercept == F){
+    X = x
+  }
+
+  beta = solve(t(X) %*% X) %*% t(X) %*% y
+  estimated_cov_matrix = t(X) %*% X
+  fitted_values = X %*% beta
+  residuals = y - fitted_values
+  R_squared = sum((fitted_values - mean(y))^2) / sum((y - mean(y))^2)
+  
+  res = list("beta" = beta, 
+             "estimated_cov_matrix" = estimated_cov_matrix,
+             "fitted_values" = fitted_values,
+             "residuals" = residuals,
+             "R_squared" = R_squared)
+    
+  return(res)
+}
+
+# For testing
+# abalone <- read.csv("/Users/thibaudbruyelle/Documents/Stanford/fall2020/stats305A/datasets/abalone_305a.csv", header = T)
+# lm(formula = Length ~ Diameter + Height, data = abalone)
+# y = as.matrix(abalone$Length)
+# x = as.matrix(abalone[,c(3,4)])
+```
+
+## Question 5
+
+```{r}
+path = "/Users/thibaudbruyelle/Documents/Stanford/fall2020/stats305A/datasets/abalone_305a.csv"
+abalone <- read.csv(path, header = T)
+```
+
+
+### (a)
+
+```{r}
+y = as.matrix(abalone$Rings)
+x = as.matrix(abalone$Length)
+model <- linear.regression(x, y, intercept = F)
+print("beta_1")
+print(model$beta[1])
+print("residuals variance")
+print(var(model$residuals)[1,])
+```
+
+Eventually, we get:
+
+$$\boxed{\hat \beta_{1} = 18.6427}$$
+$$\boxed{\widehat{\sigma^{2}} = 7.7649}$$
+
+A 95% confidence interval for $\hat \beta_{1}$:
+
+$$\boxed{\hat \beta_{1} \in [a,b]}$$
+
+
+### (c)
