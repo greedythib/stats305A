@@ -1,0 +1,76 @@
+---
+title: "Hw5"
+author: "Thibaud Bruyelle - Pablo Veyrat"
+date: "11/13/2020"
+output: pdf_document
+---
+
+# Problem 2: Varying Coefficient Model 
+
+## Question (a)
+
+See handwritten notes. 
+
+## Question (b)
+
+```{r message=FALSE, warning=FALSE}
+library(SemiPar)
+library(tidyverse)
+data(ethanol)
+pairs(ethanol)
+y = ethanol$NOx
+x = ethanol$C
+t = ethanol$E
+n = length(x)
+
+data <- data.frame("y" = y, "x" = x, "t" = t)
+# order `df` with respect to `t`
+data <- arrange(data, t)
+```
+```{r}
+# build cubic splines basis matrix
+M = 9
+knots = c(data$t[10], data$t[20], 
+          data$t[30], data$t[40], data$t[50])
+H_cubic <- matrix(ncol = M, nrow = n)
+for (i in 0:3){
+  H_cubic[,i+1] <- (data$t)^i
+}
+for(i in 1:(M-4)){
+  H_cubic[,i+4] <- sapply(data$t,function(r)ifelse(r>=knots[i],(r-knots[i])**3,0))
+}
+
+# build predictor matrix X with `2 x M` predictors
+X = matrix(nrow = n, ncol = 2*M)
+# covariates from intercept term beta_0
+for (i in 1:M){
+  X[,i] = H_cubic[,i]
+}
+# covariates from coefficient of `x` beta_1
+for (i in 1:M){
+  X[,i+M] = data$x * H_cubic[,i]
+}
+
+# FIT THE MODEL
+model.M <- lm(y ~ X -1)
+
+
+```
+
+## Question (c)
+
+```{r}
+# vector beta.0
+theta.0 <- model.M$coefficients[1:9]
+beta.0 <- H_cubic %*% theta.0
+# vector beta.1
+theta.1 <- model.M$coefficients[10:18]
+beta.1 <- H_cubic %*% theta.1
+
+# PLots
+plot(data$t, beta.0, col = 'red', panel.first=grid(), 
+     type = 'l', ylim = c(-1, 4), xlab = 'E', ylab = 'Coefficients')
+lines(data$t, beta.1, col = 'blue', type = 'l')
+legend('topleft', legend = c('beta.0', 'beta.1'), col = c('red', 'blue'), pch = 11)
+
+```
