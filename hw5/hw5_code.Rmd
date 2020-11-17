@@ -9,7 +9,7 @@ output: pdf_document
 
 ## Question (a)
 
-See handwritten notes. 
+Please see handwritten notes. 
 
 ## Question (b)
 
@@ -27,6 +27,9 @@ data <- data.frame("y" = y, "x" = x, "t" = t)
 # order `df` with respect to `t`
 data <- arrange(data, t)
 ```
+
+Here we took `M=9` because it seems coherent with the data. We could perform a k-folds cross-validation with respect to this hyparemeter in order to select an optimal value of `M*`.  Besides, since we are using cubic splines, it means that we have to select $5$ knots. After ordering the data with respect to `E`, we selected evenly spread knots.
+
 ```{r}
 # build cubic splines basis matrix
 M = 9
@@ -74,3 +77,34 @@ lines(data$t, beta.1, col = 'blue', type = 'l')
 legend('topleft', legend = c('beta.0', 'beta.1'), col = c('red', 'blue'), pch = 11)
 
 ```
+
+
+## Question (d)
+
+```{r}
+# build restricted model
+X_restricted = X[,1:11]
+model_restricted <- lm(y ~X_restricted - 1)
+RSS_restricted <- sum((model_restricted$residuals)^2)
+RSS_ur <- sum((model.M$residuals)^2)
+F.stat <- ((RSS_restricted - RSS_ur) * (n - 2*M)) / (RSS_ur * M-2)
+print(F.stat)
+qf(0.99, df1 = M-2, df2 = n-2*M )
+```
+
+**Conclusion: ** From the statistic test performed above, let us notice that we fail to reject $\mathcal{H}_{0}$ at all confidence levels. Consequently, it is *statistically* significant to consider that the slope function is linear in `E`. 
+
+## Question (e)
+
+```{r}
+# apply the same method than above
+X_restricted2 = X[,1:10]
+model_restricted2 <- lm(y ~X_restricted2 - 1)
+RSS_restricted2 <- sum((model_restricted2$residuals)^2)
+RSS_ur <- sum((model.M$residuals)^2)
+F.stat <- ((RSS_restricted2 - RSS_ur) * (n - 2*M)) / (RSS_ur * M-1)
+print(F.stat)
+qf(0.99, df1 = M-2, df2 = n-2*M )
+```
+
+**Conclusion: ** Again, we fail to reject the null hypothesis $\mathcal{H}_{0}$ so it is *statisically* significant to say that this slope function is constant in `E`.
