@@ -40,7 +40,7 @@ for(i in 1:(M-4)){
   H_cubic[,i+4] <- sapply(data$t,function(r)ifelse(r>=knots[i],(r-knots[i])**3,0))
 }
 
-# build predictor matrix X with `2 x M` predictors
+# build predictor matrix X with `2 * M` predictors
 X = matrix(nrow = n, ncol = 2*M)
 # covariates from intercept term beta_0
 for (i in 1:M){
